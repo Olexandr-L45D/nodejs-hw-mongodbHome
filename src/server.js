@@ -1,23 +1,17 @@
-// logic
+// logic in setupServer
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
 import { env } from './utils/env.js';
+import contactsRout from './routers/contactsRout.js';
+// import { getAllContacts, getContactsById } from './services/contacts.js';
 
-import { getAllStudents, getStudentById } from './services/students.js';
-
-
-
-// const app = express();
-// const PORT = 3000;
-// dotenv.config();
-// Для доступу до змінних оточення в середовищі Node.js використовується глобальний об'єкт process.env, який доступний у коді будь-якого модуля (так само як window або document доступні у браузері).
-// const PORT = Number(process.env.PORT);
 const PORT = Number(env('PORT', '3000'));
 
 export const setupServer = async () => {
     const app = express();
     app.use(express.json());
+    app.use(cors());
     app.use(
         pino({
             transport: {
@@ -25,64 +19,44 @@ export const setupServer = async () => {
             }
         })
     );
-    app.use(cors());
+    app.get('/', async (req, res) => {
+        res.status(200).json({
+            message: "Hello User!",
 
-    app.get('/', (req, res) => {
-        res.json({
-            message: 'Hello Alex!'
         });
     });
-    // app.use('*', (req, res, next) => {
-    //     res.status(404).json({
-    //         message: 'Not found',
+    app.use(contactsRout); // Додаємо роутер до app як middleware
+    // прибираю ці два запити на коллекцію і переношу в файл РОУТЕР щоб зробити маршрутизацію
+    // app.get('/contacts', async (req, res) => {
+    //     const contacts = await getAllContacts();
+    //     res.status(200).json({
+    //         status: 200,
+    //         message: "Successfully found contacts!",
+    //         data: contacts,
     //     });
-    //     // next();
     // });
-    app.get('/students', async (req, res) => {
-        const students = await getAllStudents();
-
-        res.status(200).json({
-            data: students,
-        });
-    });
-
-    app.get('/students/:studentId', async (req, res, next) => {
-        const { studentId } = req.params;
-        const student = await getStudentById(studentId);
-
-        // Відповідь, якщо контакт не знайдено
-        if (!student) {
-            res.status(404).json({
-                message: 'Student not found'
-            });
-            return;
-        }
-
-        // Відповідь, якщо контакт знайдено
-        res.status(200).json({
-            data: student,
-        });
-        next();
-    });
-
-    app.use((req, res) => {
-        res.status(404).json({
-            message: 'Not found',
-        });
-        // next();
-    });
-    app.use((err, req, res, next) => {
-        res.status(500).json({
-            message: 'Something went wrong',
-            error: err.message,
-        });
-        next();
-    });
+    // прибираю ці два запити на коллекцію і переношу в файл РОУТЕР щоб зробити маршрутизацію
+    // app.get('/contacts/:contactId', async (req, res, next) => {
+    //     const { contactId } = req.params;
+    //     const contact = await getContactsById(contactId);
+    //     if (!contact) {
+    //         res.status(404).json({
+    //             message: 'Contact not found'
+    //         });
+    //         return;
+    //     }
+    //     res.status(200).json({
+    //         status: 200,
+    //         message: `Successfully found contact with id ${contactId}!`,
+    //         data: contact,
+    //     });
+    //     next();
+    // });
 
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });
 };
 
-// http://localhost:3000/students - ми отримаємо масив усіх студентів
-// http://localhost:3000/students/:studentId
+// http://localhost:3000/contacts - in Postmen - ми отримаємо масив усіх contacts
+// http://localhost:3000/contacts/:contactId - one contacts
