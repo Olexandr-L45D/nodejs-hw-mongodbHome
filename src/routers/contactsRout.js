@@ -1,7 +1,7 @@
 import { Router } from 'express';
 // import { getAllContacts, getContactsById } from './services/contacts.js';
 const router = Router();
-import { contactAllControl, contactByIdControl } from '../controllers/contactControl.js';
+import { contactAllControl, contactByIdControl, createContactController } from '../controllers/contactControl.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 // Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
@@ -34,5 +34,5 @@ router.get('/contacts/:contactId', ctrlWrapper(contactByIdControl));
 //         data: contact,
 //     });
 // });
-
+router.post('/contacts', ctrlWrapper(createContactController));
 export default router;

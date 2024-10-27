@@ -11,3 +11,11 @@ export const getContactsById = async (contactId) => {
     return contact;
 };
 // getContactsById знаходить обєкт одного студента по айді за рах мет findById
+export const createNewContact = async (payload) => {
+    const contact = await ContactsCollection.create(payload);
+    return contact;
+};
+// getContactsById знаходить обєкт одного студента
+// Для створення нового документа в колекції, на основі вказаної моделі,
+//  в Mongoose використовується метод:  Model.create(doc) = create(payload)
+// doc — перший аргумент (обов’язковий), який містить дані (об'єкт або масив об'єктів)

@@ -1,9 +1,27 @@
 // contactControl
-import { getAllContacts, getContactsById } from './services/contacts.js';
+// Тіло запиту можна отримати у контролері
+// з об'єкта запиту req як властивість body.
+import { getAllContacts, getContactsById, createNewContact } from './services/contacts.js';
+import createHttpError from 'http-errors';
 // створюю функції контролери які тількти оброблюють
 //new fuction contactAllControl
 //new fuction contactByIdControl
-export const contactAllControl = async (reg, res) => {
+// new fuction createContactController (додавання новго контакта)
+export const createContactController = async (req, res) => {
+    // Тіло функції
+    const contact = await createNewContact(req.body);
+    res.status(201).json({
+        status: 201,
+        message: 'Add new contact',
+        data: contact
+    });
+};
+export const contactAllControl = async (req, res) => {
+    // стандартний запис контролера:
+    // const controller = (req, res) => {
+    //     const body = req.body;
+    // }
+    // const body = req.body;
     const contacts = await getAllContacts();
     res.json({
         status: 200,
@@ -29,11 +47,15 @@ export const contactByIdControl = async (req, res, next) => {
     //     });
     //     return;
     // }
-    // А тепер додаємо базову обробку помилки замість res.status(404)
+    // А тепер додаємо базову обробку помилки замість res.status(404)=> add class Error
+    // далі на методі класа Error використорвую метод createHttpError
     if (!contact) {
-        next(new Error('Contact not found'));
-        return;
+        throw createHttpError(404, 'Contact not found');
     }
+    // if (!contact) {
+    //     next(new Error('Contact not found'));
+    //     return;
+    // }
     res.status(200).json({
         status: 200,
         message: `Successfully found contact with id ${contactId}!`,
