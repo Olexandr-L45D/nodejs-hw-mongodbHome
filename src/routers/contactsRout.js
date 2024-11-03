@@ -1,9 +1,13 @@
 import { Router } from 'express';
 // import { getAllContacts, getContactsById } from './services/contacts.js';
 const router = Router();
-import { contactAllControl, contactByIdControl, createContactController } from '../controllers/contactControl.js';
+import {
+    contactAllControl, contactByIdControl, createContactController,
+    deleteContactControl, upsertContactControl, patchContactControl
+} from '../controllers/contactControl.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-
+import { validateBody } from '../middlewares/validateBody.js';
+import { createContactChema } from '../validation/contacts.js';
 // Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
 // router.get('/contacts', contactAllControl);
 router.get('/contacts', ctrlWrapper(contactAllControl));
@@ -34,5 +38,11 @@ router.get('/contacts/:contactId', ctrlWrapper(contactByIdControl));
 //         data: contact,
 //     });
 // });
-router.post('/contacts', ctrlWrapper(createContactController));
+// router.post('/contacts', ctrlWrapper(createContactController));
+router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
+
+router.delete('/contacts/:contactId', ctrlWrapper(deleteContactControl));
+router.put('/contacts/:contactId', ctrlWrapper(upsertContactControl));
+router.patch('/contacts/:contactId', ctrlWrapper(patchContactControl));
+
 export default router;
