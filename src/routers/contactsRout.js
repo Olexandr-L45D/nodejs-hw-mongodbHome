@@ -6,7 +6,8 @@ import {
     deleteContactControl, upsertContactControl, patchContactControl
 } from '../controllers/contactControl.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { validateBody, isValidId } from '../middlewares/validateBody.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { isValidId } from '../middlewares/isValidId.js';
 import { createContactChema, updateContactChema } from '../validation/contacts.js';
 // Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
 // router.get('/contacts', contactAllControl);

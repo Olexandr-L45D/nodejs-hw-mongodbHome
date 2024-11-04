@@ -7,6 +7,7 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
 // створюю функції контролери які тількти оброблюють
 //new fuction contactAllControl
 //new fuction contactByIdControl
@@ -27,9 +28,10 @@ export const contactAllControl = async (req, res) => {
     // }
     // const body = req.body;
     const { page, perPage } = parsePaginationParams(req.query);
+    const { sortOredr, sortBy } = parseSortParams(req.query);
     const contacts = await getAllContacts({
-        page,
-        perPage,
+        page, perPage,
+        sortOredr, sortBy,
     });
     res.json({
         status: 200,
