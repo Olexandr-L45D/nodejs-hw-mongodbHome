@@ -6,8 +6,8 @@ import {
     deleteContactControl, upsertContactControl, patchContactControl
 } from '../controllers/contactControl.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { validateBody } from '../middlewares/validateBody.js';
-import { createContactChema } from '../validation/contacts.js';
+import { validateBody, isValidId } from '../middlewares/validateBody.js';
+import { createContactChema, updateContactChema } from '../validation/contacts.js';
 // Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
 // router.get('/contacts', contactAllControl);
 router.get('/contacts', ctrlWrapper(contactAllControl));
@@ -20,7 +20,7 @@ router.get('/contacts', ctrlWrapper(contactAllControl));
 //     });
 // });
 // router.get('/contacts/:contactId', contactByIdControl);
-router.get('/contacts/:contactId', ctrlWrapper(contactByIdControl));
+router.get('/contacts/:contactId', isValidId, ctrlWrapper(contactByIdControl));
 // router.get('/contacts/:contactId', async (req, res, next) => {
 //     const { contactId } = req.params;
 //     const contact = await getContactsById(contactId);
@@ -41,8 +41,8 @@ router.get('/contacts/:contactId', ctrlWrapper(contactByIdControl));
 // router.post('/contacts', ctrlWrapper(createContactController));
 router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
 
-router.delete('/contacts/:contactId', ctrlWrapper(deleteContactControl));
-router.put('/contacts/:contactId', ctrlWrapper(upsertContactControl));
-router.patch('/contacts/:contactId', ctrlWrapper(patchContactControl));
+router.delete('/contacts/:contactId', isValidId, ctrlWrapper(deleteContactControl));
+router.put('/contacts/:contactId', validateBody(createContactChema), ctrlWrapper(upsertContactControl));
+router.patch('/contacts/:contactId', validateBody(updateContactChema), ctrlWrapper(patchContactControl));
 
 export default router;

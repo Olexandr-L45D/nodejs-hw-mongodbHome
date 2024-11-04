@@ -4,8 +4,9 @@
 import {
     getAllContacts, getContactsById,
     createNewContact, deletContactById, updateContactById
-} from './services/contacts.js';
+} from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 // створюю функції контролери які тількти оброблюють
 //new fuction contactAllControl
 //new fuction contactByIdControl
@@ -25,7 +26,11 @@ export const contactAllControl = async (req, res) => {
     //     const body = req.body;
     // }
     // const body = req.body;
-    const contacts = await getAllContacts();
+    const { page, perPage } = parsePaginationParams(req.query);
+    const contacts = await getAllContacts({
+        page,
+        perPage,
+    });
     res.json({
         status: 200,
         message: 'Successfully found contacts',
