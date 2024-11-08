@@ -41,6 +41,7 @@ router.get('/contacts/:contactId', isValidId, ctrlWrapper(contactByIdControl));
 // });
 // router.post('/contacts', ctrlWrapper(createContactController));
 router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
+// router.post('/register', validateBody(createContactChema), ctrlWrapper(createContactController));
 
 router.delete('/contacts/:contactId', isValidId, ctrlWrapper(deleteContactControl));
 router.put('/contacts/:contactId', validateBody(createContactChema), ctrlWrapper(upsertContactControl));
