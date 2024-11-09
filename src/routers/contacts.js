@@ -9,8 +9,13 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { createContactChema, updateContactChema } from '../validation/contacts.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { checkRoles } from '../middlewares/checkRoles.js';
+import { ROLES } from '../constants/index.js';
 // Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
-// router.get('/contacts', contactAllControl);
+
+router.use(authenticate);
+router.get('/', checkRoles(ROLES.TEACHER), contactAllControl);
 router.get('/contacts', ctrlWrapper(contactAllControl));
 // router.get('/contacts', async (req, res) => {
 //     const contacts = await getAllContacts();
@@ -40,8 +45,8 @@ router.get('/contacts/:contactId', isValidId, ctrlWrapper(contactByIdControl));
 //     });
 // });
 // router.post('/contacts', ctrlWrapper(createContactController));
-router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
-// router.post('/register', validateBody(createContactChema), ctrlWrapper(createContactController));
+// router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
+router.post('/register', validateBody(createContactChema), ctrlWrapper(createContactController));
 
 router.delete('/contacts/:contactId', isValidId, ctrlWrapper(deleteContactControl));
 router.put('/contacts/:contactId', validateBody(createContactChema), ctrlWrapper(upsertContactControl));

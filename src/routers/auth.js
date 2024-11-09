@@ -22,3 +22,7 @@ router.post(
 );
 router.post('/refresh', ctrlWrapper(refreshUserSessionController));
 export default router;
+
+// "name": "OlenaLi",
+// "email": "OlenaLi@gmail.com",
+//     "password": "my-wife2"

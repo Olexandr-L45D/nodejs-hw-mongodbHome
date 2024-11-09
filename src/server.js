@@ -4,13 +4,13 @@ import pino from 'pino-http';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { env } from './utils/env.js';
-import contactsRout from './routers/contactsRout.js';
-// import { getAllContacts, getContactsById } from './services/contacts.js';
+// import contactsRout from './routers/contactsRout.js';
+
 // Імпортуємо middleware
 import { errorHandlerContact } from './middlewares/errorHandlerContact.js';
 import { notFoundHandlerContact } from './middlewares/notFoundHandlerContact.js';
-// робимо такий імпорт і підключення
-// import router from './routers/index.js';
+
+import router from './routers/index.js';
 
 const PORT = Number(env('PORT', '3000'));
 
@@ -39,8 +39,8 @@ export const setupServer = async () => {
 
         });
     });
-    // app.use(router);
-    app.use(contactsRout); // Додаємо роутер до app як middleware
+    app.use(router);
+    // app.use(contactsRout); // Додаємо роутер до app як middleware
     app.use(errorHandlerContact); // Додаємо errorHandle до app як middleware
     app.use(notFoundHandlerContact); // Додаємо notFoundHandle до app як middleware
     app.listen(PORT, () => {

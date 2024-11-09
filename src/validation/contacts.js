@@ -12,6 +12,7 @@ export const createContactChema = Joi.object({
     email: Joi.string().email().required(),
     isFavourite: Joi.boolean(),
     contactType: Joi.string().valid('work', 'home', 'personal').required(),
+    parentId: Joi.string().required(),  // нова властивість
 
 });
 export const updateContactChema = Joi.object({
