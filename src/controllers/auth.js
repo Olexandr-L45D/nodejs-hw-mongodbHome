@@ -1,7 +1,6 @@
-// controllers registerUser
 
-import { ONE_DAY } from "../constants/index.js";
-import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js";
+import { THERTY_DAY } from "../constants/index.js";
+import { registerUser, loginUser, logoutUser, refreshUsersSession, requestResetToken, resetPassword, verifyUser } from "../services/auth.js";
 
 export const registerUserController = async (req, res) => {
     const user = await registerUser(req.body);
@@ -16,12 +15,11 @@ export const loginUserController = async (req, res) => {
     const session = await loginUser(req.body);
     res.cookie('refreshToken', session.refreshToken, {
         httpOnly: true,
-        // http-only cookie, що означає, що він доступний тільки через HTTP-запити і не може бути доступним через JavaScript на стороні клієнта
-        expires: new Date(Date.now() + ONE_DAY),
+        expires: new Date(Date.now() + THERTY_DAY),
     });
-    res.cookie('sessioId', session._id, {
+    res.cookie('sessionId', session._id, {
         httpOnly: true,
-        expires: new Date(Date.now() + ONE_DAY),
+        expires: new Date(Date.now() + THERTY_DAY),
     });
     res.status(200).json({
         status: 200,
@@ -35,20 +33,20 @@ export const loginUserController = async (req, res) => {
 export const logoutUserController = async (req, res) => {
     if (req.cookies.sessionId) {
         await logoutUser(req.cookies.sessionId);
-        res.clearCookie('sessionId');
-        res.clearCookie('refreshToken');
-        res.status(204).send();
     };
+    res.clearCookie('sessionId');
+    res.clearCookie('refreshToken');
+    res.status(204).send();
 };
 
 const setupSession = (res, session) => {
     res.cookie('refreshToken', session.refreshToken, {
         httpOnly: true,
-        expires: new Date(Date.now() + ONE_DAY),
+        expires: new Date(Date.now() + THERTY_DAY),
     });
     res.cookie('sessionId', session._id, {
         httpOnly: true,
-        expires: new Date(Date.now() + ONE_DAY),
+        expires: new Date(Date.now() + THERTY_DAY),
     });
 };
 
@@ -66,5 +64,33 @@ export const refreshUserSessionController = async (req, res) => {
         data: {
             accessToken: session.accessToken,
         },
+    });
+};
+
+export const requestResetEmailController = async (req, res) => {
+    await requestResetToken(req.body.email);
+    res.json({
+        message: 'Reset password email was successfully sent!',
+        status: 200,
+        data: {},
+    });
+};
+
+export const resetPasswordController = async (req, res) => {
+    await resetPassword(req.body);
+    res.json({
+        message: 'Password was successfully reset!',
+        status: 200,
+        data: {},
+    });
+};
+
+export const verifyController = async (req, res) => {
+    const { token } = req.query;
+    await verifyUser(token);
+
+    res.json({
+        status: 200,
+        message: "User verify successfully"
     });
 };

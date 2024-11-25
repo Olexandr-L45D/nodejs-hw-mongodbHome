@@ -1,55 +1,48 @@
 import { Router } from 'express';
-// import { getAllContacts, getContactsById } from './services/contacts.js';
+
 const router = Router();
 import {
     contactAllControl, contactByIdControl, createContactController,
     deleteContactControl, upsertContactControl, patchContactControl
-} from '../controllers/contactControl.js';
+} from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { createContactsSchema, updateContactsSchema } from '../validation/contacts.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
-import { createContactChema, updateContactChema } from '../validation/contacts.js';
 import { authenticate } from '../middlewares/authenticate.js';
-import { checkRoles } from '../middlewares/checkRoles.js';
-import { ROLES } from '../constants/index.js';
-// Імпортуємо Router з Express, щоб створити об'єкт роутера router, після чого одразу експортуємо його.
+import { upload } from '../middlewares/multer.js';
 
 router.use(authenticate);
-router.get('/', checkRoles(ROLES.TEACHER), contactAllControl);
-router.get('/contacts', ctrlWrapper(contactAllControl));
-// router.get('/contacts', async (req, res) => {
-//     const contacts = await getAllContacts();
-//     res.status(200).json({
-//         status: 200,
-//         message: 'Htis is all contacts',
-//         data: contacts
-//     });
-// });
-// router.get('/contacts/:contactId', contactByIdControl);
-router.get('/contacts/:contactId', isValidId, ctrlWrapper(contactByIdControl));
-// router.get('/contacts/:contactId', async (req, res, next) => {
-//     const { contactId } = req.params;
-//     const contact = await getContactsById(contactId);
-//     // Відповідь, якщо контакт не знайден
-//     if (!contact) {
-//         res.status(404).json({
-//             status: 404,
-//             massage: 'Contact not found',
-//         });
-//         return;
-//     }
-//     res.status(200).json({
-//         status: 200,
-//         message: `Successfully found contact with id ${contactId}!`,
-//         data: contact,
-//     });
-// });
-// router.post('/contacts', ctrlWrapper(createContactController));
-// router.post('/contacts', validateBody(createContactChema), ctrlWrapper(createContactController));
-router.post('/register', validateBody(createContactChema), ctrlWrapper(createContactController));
-
-router.delete('/contacts/:contactId', isValidId, ctrlWrapper(deleteContactControl));
-router.put('/contacts/:contactId', validateBody(createContactChema), ctrlWrapper(upsertContactControl));
-router.patch('/contacts/:contactId', validateBody(updateContactChema), ctrlWrapper(patchContactControl));
-
+router.get('/', ctrlWrapper(contactAllControl));
+router.get('/:contactId', isValidId, ctrlWrapper(contactByIdControl));
+router.post('/', upload.single('photo'), validateBody(createContactsSchema), ctrlWrapper(createContactController));
+router.put('/:contactId', isValidId, upload.single('photo'), validateBody(updateContactsSchema), ctrlWrapper(upsertContactControl));
+router.patch('/:contactId', isValidId, upload.single('photo'), validateBody(updateContactsSchema), ctrlWrapper(patchContactControl));
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactControl));
 export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// прибираю ендпоінт (/contacts) щоб не повторювати і додаю при виклику на сервері першим аргументом
