@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { validateCode, getUsernameFromGoogleTokenPayload } from "../utils/googleOAuth2.js";
 
 const appDomain = env("APP_DOMAIN");
 const jwtSecret = env("JWT_SECRET");
@@ -158,6 +159,34 @@ export const verifyUser = async token => {
     }
 };
 
+export const loginOrRegisterWithGoogle = async code => {
+    const loginTicket = await validateCode(code);
+    const payload = loginTicket.getPayload();
+    if (!payload) {
+        throw createHttpError(401);
+    }
+
+    let user = await UsersCollection.findOne({
+        email: payload.email,
+    });
+    if (!user) {
+        const password = await bcrypt.hash(randomBytes(10), 10);
+        const username = getUsernameFromGoogleTokenPayload(payload);
+
+        user = await UsersCollection.create({
+            email: payload.email,
+            username,
+            password,
+        });
+    }
+
+    const newSession = createSession();
+
+    return SessionsCollection.create({
+        userId: user._id,
+        ...newSession,
+    });
+};
 // Для налаштування сховища ми скористаємося методом бібліотеки diskStorage. Налаштування сховища для бібліотеки multer включає два основні параметри: destination і filename.
 
 

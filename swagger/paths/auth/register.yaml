@@ -24,7 +24,7 @@ parameters:
     example: '111223Jn'
 requestBody:
   content:
-    multipart/form-data:
+    application/json:
       schema:
         type: object
         required:
@@ -44,10 +44,6 @@ requestBody:
            description: "password"
            type: string
            example: '111223Jn'
-          photo:
-           description: "Link to user's photo"
-           type: string
-           format: binary
 
 responses:
   '201':
